@@ -7,26 +7,33 @@
 #include "Components/SphereComponent.h"
 #include "Components/InstancedStaticMeshComponent.h"
 #include "BirdActor.h"
-#include "Flock_ChildActor.generated.h"
+#include "FlockManager.generated.h"
 
 USTRUCT()
-struct FlockMemberData_new {
+struct FFlockMemberData
+{
 	GENERATED_BODY()
 
 	UPROPERTY()
-		int32 InstanceIndex;
+	int32 InstanceIndex;
+	
 	UPROPERTY()
-		FVector Velocity;
+	FVector Velocity;
+	
 	UPROPERTY()
-		FVector WanderPosition;
+	FVector WanderPosition;
+	
 	UPROPERTY()
-		FTransform Transform;
+	FTransform Transform;
+	
 	UPROPERTY()
-		float ElapsedTimeSinceLastWander;
+	float ElapsedTimeSinceLastWander;
+	
 	UPROPERTY()
-		bool bIsFlockLeader;
+	bool bIsFlockLeader;
 
-	FlockMemberData_new() {
+	FFlockMemberData()
+	{
 		InstanceIndex = 0;
 		Velocity = FVector(0, 0, 0);
 		ElapsedTimeSinceLastWander = 0.0f;
@@ -36,74 +43,101 @@ struct FlockMemberData_new {
 };
 
 UCLASS()
-class FLOCK_API AFlock_ChildActor : public AActor
+class FLOCK_API AFlockManager : public AActor
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this actor's properties
-	AFlock_ChildActor();
+	AFlockManager();
+	
 	UPROPERTY(BlueprintReadWrite, Category = Flock)
-		int NumFlockInstance;
+	int NumFlockInstance;
+	
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = Flock)
-		USphereComponent* pSphereComponent;
+	USphereComponent* SphereComponent;
+	
 	UPROPERTY(BlueprintReadOnly, Category = Flock)
-		int32 NumFlock;
+	int32 NumFlock;
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Flock)
-		float FlockRadius = 1000.0f;
+	float FlockRadius = 1000.0f;
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Flock)
-		float FlockMinSpeed = 10.0f;
+	float FlockMinSpeed = 10.0f;
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Flock)
-		float FlockMaxSpeed = 100.0f;
+	float FlockMaxSpeed = 100.0f;
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Flock)
-		float FlockWanderUpdateRate = 2000.0f;
+	float FlockWanderUpdateRate = 2000.0f;
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Flock)
-		float FlockMinWanderDistance = 50.0f;
+	float FlockMinWanderDistance = 50.0f;
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Flock)
-		float FlockMateAwarnessRadius = 400.0f;
+	float FlockMateAwarnessRadius = 400.0f;
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Flock)
-		float FlockEnemyAwarnessRadius = 400.0f;
+	float FlockEnemyAwarnessRadius = 400.0f;
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Flock)
-		float FollowScale = 1.0f;
+	float FollowScale = 1.0f;
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Flock)
-		float AlignScale = 0.4f;
+	float AlignScale = 0.4f;
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Flock)
-		float CohesionScale = 1.0f;
+	float CohesionScale = 1.0f;
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Flock)
-		float SeperationScale = 1.0f;
+	float SeperationScale = 1.0f;
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Flock)
-		float FleeScale = 1.0f;
+	float FleeScale = 1.0f;
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Flock)
-		float SeperationRadius = 10.0f;
+	float SeperationRadius = 10.0f;
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Flock)
-		float FlockMaxSteeringForce = 100.0f;
+	float FlockMaxSteeringForce = 100.0f;
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Flock)
-		float FlockMateRotationRate = 0.3f;
+	float FlockMateRotationRate = 0.3f;
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Flock)
-		bool DrawSteeringRadius = false;
+	bool DrawSteeringRadius = false;
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Flock)
-		bool DrawSteeringAlign = false;
+	bool DrawSteeringAlign = false;
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Flock)
-		bool DrawSteeringFollow = false;
+	bool DrawSteeringFollow = false;
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Flock)
-		bool DrawSteeringSeparate = false;
+	bool DrawSteeringSeparate = false;
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Flock)
-		bool DrawSteeringCohesion = false;
+	bool DrawSteeringCohesion = false;
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Flock)
-		bool DrawSteeringFlee = false;
+	bool DrawSteeringFlee = false;
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Flock)
-		bool DrawSteeringFleeThreat = false;
+	bool DrawSteeringFleeThreat = false;
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Flock)
-		bool DrawLeaderTarget = false;
-	TArray<FlockMemberData_new> mFlockMemberData_new;
+	bool DrawLeaderTarget = false;
+	
+	TArray<FFlockMemberData> FlockMemberData;
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Flock)
-		TArray<AActor*> Threats;
+	TArray<AActor*> Threats;
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Flock)
-		TSubclassOf<ABirdActor> BirdActor;
+	TSubclassOf<ABirdActor> BirdActor;
+	
 	TArray<AActor*> BirdArr;
-
-
-
 
 protected:
 	// Called when the game starts or when spawned
@@ -112,15 +146,25 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	
 	UFUNCTION(BlueprintCallable, Category = Flock)
-		void AddFlockMemberWorldSpace(const FTransform& WorldTransform);
-	FVector GetRandomWanderLocation();
-	TArray<int32> GetNearbyFlockMates(int32 flockmember);
-	FVector SteeringWander(FlockMemberData_new& flocker);
-	FVector SteeringAlign(FlockMemberData_new& flocker, TArray<int32>& flockMates);
-	FVector SteeringSeperate(FlockMemberData_new& flocker, TArray<int32>& flockMates);
-	FVector SteeringCohesion(FlockMemberData_new& flocker, TArray<int32>& flockMates);
-	FVector SteeringFollow(FlockMemberData_new& flocker, int32 flockleader);
-	FVector SteeringFlee(FlockMemberData_new& flocker);
-	FRotator FindLookAtRotation(FVector start, FVector end);
+	void AddFlockMemberWorldSpace(const FTransform& WorldTransform);
+	
+	FVector GetRandomWanderLocation() const;
+	
+	TArray<int32> GetNearbyFlockMates(const int32 Flockmember);
+	
+	FVector SteeringWander(FFlockMemberData& Flocker) const;
+	
+	FVector SteeringAlign(FFlockMemberData& Flocker, TArray<int32>& FlockMates);
+	
+	FVector SteeringSeperate(const FFlockMemberData& Flocker, TArray<int32>& FlockMates);
+	
+	FVector SteeringCohesion(const FFlockMemberData& Flocker, TArray<int32>& FlockMates);
+	
+	FVector SteeringFollow(const FFlockMemberData& Flocker, int32 Flockleader);
+	
+	FVector SteeringFlee(const FFlockMemberData& Flocker);
+
+	static FRotator FindLookAtRotation(FVector Start, FVector End);
 };
